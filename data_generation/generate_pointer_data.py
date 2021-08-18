@@ -94,8 +94,10 @@ def generate_pointer_trajectories(multiple_problems, all_sources_to_targets=None
             trajectory.append({"state": source,
                                "action": target,
                                "next_state": next_state})
-
-        trajectories.append(trajectory)
+        # Note that there may still be same steps existing in the dataset
+        if trajectory not in trajectories:
+            trajectories.append(trajectory)
+        # trajectories.append(trajectory)
 
     return trajectories
 

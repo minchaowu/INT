@@ -76,16 +76,30 @@ def generate_trajectories(multiple_problems, all_sources_to_targets=None):
     return trajectories
 
 def generate_pointer_trajectories(multiple_problems, all_sources_to_targets=None):
+    dup_state = []
+    dup_action = []
     if not all_sources_to_targets:
         all_sources_to_targets = dict()
 
     trajectories = []
     for problem in multiple_problems:
+        flag = False
         trajectory = []
         sources, targets = convert_proof_to_pointer_repr(problem)
 
         zipped = list(zip(sources, targets))
         for i, (source, target) in enumerate(zipped):
+            if source not in dup_state:
+                dup_state.append(source)
+            else:
+                flag = True
+                break
+            if target not in dup_action:
+                dup_action.append(target)
+            else:
+                flag = True
+                break
+            
             if i + 1 < len(zipped):
                 next_state, next_action = zipped[i+1]
             else:
@@ -95,9 +109,10 @@ def generate_pointer_trajectories(multiple_problems, all_sources_to_targets=None
                                "action": target,
                                "next_state": next_state})
         # Note that there may still be same steps existing in the dataset
-        if trajectory not in trajectories:
+        # if trajectory not in trajectories:
+        #     trajectories.append(trajectory)
+        if not flag:
             trajectories.append(trajectory)
-        # trajectories.append(trajectory)
 
     return trajectories
 

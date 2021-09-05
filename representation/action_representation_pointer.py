@@ -8,8 +8,6 @@ from visualization.seq_parse import entity_to_seq_string
 
 theorem_names = [theorem.name for theorem in list(all_axioms_to_prove.values())]
 
-<<<<<<< HEAD
-=======
 thm2index = {
     node: ind
     for ind, node in enumerate(theorem_names)
@@ -17,8 +15,6 @@ thm2index = {
 index2thm = {
     ind: node for ind, node in enumerate(theorem_names)
 }
-
->>>>>>> 272edb7af435d6fc62004bb0afcb2786c874301f
 CONDITION_LEXEME = '&'
 OBJECTIVE_LEXEME = '#'
 PADDING_LEXEME = '_'

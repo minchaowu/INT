@@ -27,13 +27,13 @@ opts = jsbeautifier.default_options()
 opts.indent_size = 2
 
 
-with open("/workspace/INT/latent_dataset_pointer_repr.json") as f:
+with open("/workspace/INT/latent_dataset_pointer_repr_new.json") as f:
     dataset = json.load(f)
 
 references = generate_references(dataset)
 references = jsbeautifier.beautify(json.dumps(references), opts)
 
-with open("latent_dataset_pointer_references.json", "w") as f:
+with open("latent_dataset_pointer_references_new.json", "w") as f:
     f.write(references)
 
 

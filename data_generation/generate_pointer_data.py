@@ -205,6 +205,8 @@ if __name__ == "__main__":
     parser.add_argument('--num_probs', type=int, default=1)
     parser.add_argument('--use_combos', action='store_true')
     parser.add_argument('--num_order_or_combo', type=int, default=None)
+    parser.add_argument('--id', type=int, default=0)
+    
     args = parser.parse_args()
 
     if not os.path.isdir(args.dump_path):
@@ -219,14 +221,14 @@ if __name__ == "__main__":
     # trajectories = generate_pointer_trajectories(multiple_problems=problems)
     with open("latent_dataset_pointer_repr.json") as f:
         dataset = json.load(f)
-    trajectories, entity_ref = generate_pointer_trajectories_new(dataset, multiple_problems=problems)
+    trajectories, entity_ref = generate_pointer_trajectories_new([], multiple_problems=problems)
 
     opts = jsbeautifier.default_options()
     opts.indent_size = 2
     latent_dataset = jsbeautifier.beautify(json.dumps(trajectories), opts)
     entity_ref = jsbeautifier.beautify(json.dumps(entity_ref), opts)
 
-    with open("latent_dataset_pointer_repr_new.json", "w") as f:
+    with open("latent_dataset_pointer_repr_new_{}.json".format(args.id), "w") as f:
         f.write(latent_dataset)
-    with open("entity_ref.json", "w") as f:
+    with open("entity_ref_{}.json".format(args.id), "w") as f:
         f.write(entity_ref)

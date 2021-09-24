@@ -8,6 +8,8 @@ from visualization.seq_parse import entity_to_seq_string
 
 theorem_names = [theorem.name for theorem in list(all_axioms_to_prove.values())]
 
+theorems = [theorem for theorem in list(all_axioms_to_prove.values())]
+
 thm2index = {
     node: ind
     for ind, node in enumerate(theorem_names)
@@ -15,6 +17,10 @@ thm2index = {
 index2thm = {
     ind: node for ind, node in enumerate(theorem_names)
 }
+index2thm_obj = {
+    ind: node for ind, node in enumerate(theorems)
+}
+
 CONDITION_LEXEME = '&'
 OBJECTIVE_LEXEME = '#'
 PADDING_LEXEME = '_'
@@ -398,6 +404,10 @@ class ActionRepresentationPointer:
             action[0] = thm2index[action[0]]
             for i in range(1, len(action)):
                 action[i] = action[i].index
+        if mode == 'mc':
+            action[0] = index2thm_obj[thm2index[action[0]]]
+            for i in range(1, len(action)):
+                action[i] = action[i]
 
         return tuple(action)
 

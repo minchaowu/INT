@@ -1,12 +1,19 @@
 import json
 
 from data_generation.generate_problems import generate_multiple_problems
+from data_generation.generate_problems import generate_problem
+
 from representation.action_representation_pointer import ActionRepresentationPointer, thm2index
 
 with open('data/benchmark/field/combinations.json', 'r') as file:
     combos = json.load(file)
 
-x = generate_multiple_problems(5, 5, 1, train_test='test', combos=combos)
+with open('data/benchmark/field/orders.json', 'r') as file:
+    orders = json.load(file)
+
+x = generate_multiple_problems(3, 7, 1, train_test='train', orders=orders)
+
+# x = generate_multiple_problems(3, 7, 1, train_test='train', combos=combos)
 
 sample_objective = x[0]['all'].io_tuples[0][0]['objectives'][0]
 sample_axiom = thm2index[x[0]['all'].io_tuples[0][1].name]
@@ -19,3 +26,5 @@ print(f'Encoded action: {action_rep_str}')
 
 decoded_action = ActionRepresentationPointer.pointer_str_to_action(sample_objective, action_rep_str)
 print(f'Decoded action: {decoded_action}')
+
+y = generate_problem(3, 7, 1, orders=orders)

@@ -79,10 +79,10 @@ def step(objective, action, entity_ref):
         decoded_action = ActionRepresentationPointer.pointer_str_to_action(objectives[0], action, mode="mc")
     except ValueError:
         # print("Action decoding error")
-        return "error"
+        return "error", entity_ref
     except AssertionError:
         # print("Assertion error when decoding actions.")
-        return "error"
+        return "error", entity_ref
     lemma = decoded_action[0]
     operands = decoded_action[1:]
     prover.apply_theorem(lemma, operands)
@@ -90,19 +90,21 @@ def step(objective, action, entity_ref):
         
     if prover.is_proved():
         # print("Valid proof")
-        return "QED"
+        return "QED", entity_ref
     else:
         obs = prover.get_observation()
         source = proof_parser.observation_to_source(obs)
         # assert source == objective
         # print(source)
         # print(convert_proof_to_pointer_repr(obs))
+        entity_ref[source] = {"objective": obs["objectives"][0].name,
+                              "ground_truth": [g.name for g in obs["ground_truth"]]}
         
-        return source
+        return source, entity_ref
 
 
 for g in predictions:
-    b = step(g, predictions[g][0], entity_ref)
+    b, entity_ref = step(g, predictions[g][0], entity_ref)
     print(b)
 
 

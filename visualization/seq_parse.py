@@ -1,7 +1,7 @@
 import re
-from visualization.latex_parse import extract_two_operands
-from logic.utils import standard_numerical_functions, standard_logic_functions
-from logic.logic import Entity
+from INT.visualization.latex_parse import extract_two_operands
+from INT.logic.utils import standard_numerical_functions, standard_logic_functions
+from INT.logic.logic import Entity
 
 
 def rm_function_and_brackets(whole_string, function_name):

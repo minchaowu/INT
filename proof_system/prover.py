@@ -1,5 +1,5 @@
-from proof_system.logic_functions import necessary_logic_functions
-from proof_system.graph_seq_conversion import Parser
+from INT.proof_system.logic_functions import necessary_logic_functions
+from INT.proof_system.graph_seq_conversion import Parser
 
 
 class Prover:

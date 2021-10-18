@@ -1,11 +1,11 @@
 import random
 from copy import deepcopy
 
-from logic.logic import Entity
-from proof_system.logic_functions import necessary_logic_functions
-from proof_system.meta_axiom import MetaAxiom
-from proof_system.numerical_functions import necessary_numerical_functions
-from proof_system.utils import is_entity, is_structured, substitution, search_operator_operands_in_gt, \
+from INT.logic.logic import Entity
+from INT.proof_system.logic_functions import necessary_logic_functions
+from INT.proof_system.meta_axiom import MetaAxiom
+from INT.proof_system.numerical_functions import necessary_numerical_functions
+from INT.proof_system.utils import is_entity, is_structured, substitution, search_operator_operands_in_gt, \
     side_of_an_entity, is_ls_type
 
 random.seed(0)

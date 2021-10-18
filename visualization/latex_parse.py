@@ -1,7 +1,7 @@
 import re
 
-from logic.logic import Entity
-from logic.utils import standard_numerical_functions
+from INT.logic.logic import Entity
+from INT.logic.utils import standard_numerical_functions
 
 
 def split_count(s, count):

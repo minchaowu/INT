@@ -1,7 +1,7 @@
 from copy import deepcopy
 
-from proof_system.numerical_functions import necessary_numerical_functions
-from logic.logic import Entity, LogicStatement
+from INT.proof_system.numerical_functions import necessary_numerical_functions
+from INT.logic.logic import Entity, LogicStatement
 
 import random
 random.seed(0)

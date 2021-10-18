@@ -1,14 +1,14 @@
-from proof_system.prover import Prover
-from proof_system.all_axioms import all_axioms
-from visualization.seq_parse import name_to_ls
-from representation.action_representation_pointer import ActionRepresentationPointer, thm2index
+from INT.proof_system.prover import Prover
+from INT.proof_system.all_axioms import all_axioms
+from INT.visualization.seq_parse import name_to_ls
+from INT.representation.action_representation_pointer import ActionRepresentationPointer, thm2index
 # from data_generation.generate_pointer_data import convert_proof_to_pointer_repr
-from proof_system.graph_seq_conversion import Parser
+from INT.proof_system.graph_seq_conversion import Parser
 
 import json
 import sys
 
-proof_parser = Parser()
+proof_parser = INT.proof_system.graph_seq_conversion.Parser()
 
 with open("test_proof/entity_ref_2000.json") as f:
     entity_ref = json.load(f)

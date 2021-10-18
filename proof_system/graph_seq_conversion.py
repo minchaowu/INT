@@ -1,5 +1,5 @@
-from visualization.seq_parse import entity_to_seq_string, logic_statement_to_seq_string
-from proof_system.all_axioms import all_axioms_to_prove
+from INT.visualization.seq_parse import entity_to_seq_string, logic_statement_to_seq_string
+from INT.proof_system.all_axioms import all_axioms_to_prove
 
 
 compact_theorem_name = {

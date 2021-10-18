@@ -8,7 +8,7 @@ from INT.proof_system.graph_seq_conversion import Parser
 import json
 import sys
 
-proof_parser = INT.proof_system.graph_seq_conversion.Parser()
+proof_parser = Parser()
 
 with open("test_proof/entity_ref_2000.json") as f:
     entity_ref = json.load(f)

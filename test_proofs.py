@@ -1,7 +1,7 @@
-from proof_system.prover import Prover
-from proof_system.all_axioms import all_axioms
-from visualization.seq_parse import name_to_ls
-from representation.action_representation_pointer import ActionRepresentationPointer, thm2index
+from INT.proof_system.prover import Prover
+from INT.proof_system.all_axioms import all_axioms
+from INT.visualization.seq_parse import name_to_ls
+from INT.representation.action_representation_pointer import ActionRepresentationPointer, thm2index
 import json
 import sys
 
@@ -17,7 +17,7 @@ with open("test_proof/latent_dataset_pointer_repr_new_2000.json") as f:
 # with open("predicted_actions_MSE.json") as f:
 #     predictions = json.load(f)
 
-with open("BFS_proofs.json") as f:
+with open("latent_BFS_proofs.json") as f:
     predictions = json.load(f)
 
 
@@ -99,20 +99,68 @@ def run_proof(objective, actions, entity_ref):
     return False
 
 
+def run_proof_with_steps(objective, actions, entity_ref):
+    ground_truth = entity_ref[objective]["ground_truth"]
+    goal = entity_ref[objective]["objective"]
+    objectives = [name_to_ls(goal)]
+    ground_truth = [name_to_ls(g) for g in ground_truth]
+    # print(objectives)
+    # print(ground_truth)
+    prover = Prover(all_axioms, ground_truth, objectives, prove_direction="backward")
+    for s,a in enumerate(actions):
+        objectives = prover.get_objectives()
+        try:
+            decoded_action = ActionRepresentationPointer.pointer_str_to_action(objectives[0], a, mode="mc")
+        except ValueError:
+            print("Action decoding error")
+            return False,-1
+        except AssertionError:
+            print("Assertion error when decoding actions.")
+            return False,-1
+        lemma = decoded_action[0]
+        operands = decoded_action[1:]
+        prover.apply_theorem(lemma, operands)
+        # print(prover.get_observation())
+        if prover.is_proved():
+            print("Valid proof")
+            return True,s
+        # objectives = prover.get_objectives()
+
+    print("Invalid proof")
+    return False,-1
+
+# c =0
+# metrics = {}
+# for i in range(7):
+#     metrics[i+1] = 0
+# for t in dataset:
+#     c += 1
+#     for j,s in enumerate(t):
+#         objective = s["state"]
+#         try:
+#             actions = predictions[objective]
+#         except KeyError:
+#             print("Missing keys: {}".format(objective))
+#             continue
+#         result = run_proof(objective, actions, entity_ref)
+#         if result:
+#             print("Proved")
+#             metrics[j+1] += 1
+#     print(c)
+# print(metrics)
+
+
+c =0
 metrics = {}
 for i in range(7):
     metrics[i+1] = 0
-for t in dataset:
-    for j,s in enumerate(t):
-        objective = s["state"]
-        try:
-            actions = predictions[objective]
-        except KeyError:
-            print("Missing keys: {}".format(objective))
-            continue
-        result = run_proof(objective, actions, entity_ref)
-        if result:
-            print("Proved")
-            metrics[j+1] += 1
+for t in predictions:
+    # objective = t s["state"]
+    actions = predictions[t]
+    result,s = run_proof_with_steps(t, actions, entity_ref)
+    if result:
+        print("Proved")
+        
+        metrics[s+1] += 1
 
 print(metrics)

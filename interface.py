@@ -10,14 +10,14 @@ import sys
 
 proof_parser = Parser()
 
-with open("test_proof/entity_ref_2000.json") as f:
-    entity_ref = json.load(f)
+# with open("test_proof/entity_ref_2000.json") as f:
+#     entity_ref = json.load(f)
 
-with open("test_proof/latent_dataset_pointer_repr_new_2000.json") as f:
-    dataset = json.load(f)
+# with open("test_proof/latent_dataset_pointer_repr_new_2000.json") as f:
+#     dataset = json.load(f)
 
-with open("BFS_proofs.json") as f:
-    predictions = json.load(f)
+# with open("BFS_proofs.json") as f:
+#     predictions = json.load(f)
 
 # test_objectives = ["Equivalent ( mul ( add ( a , add ( c , f ) ) , add ( a , c ) ) , mul ( add ( a , add ( c , f ) ) , add ( a , add ( c , f ) ) ) )"]
 
@@ -103,9 +103,9 @@ def step(objective, action, entity_ref):
         return source, entity_ref
 
 
-for g in predictions:
-    b, entity_ref = step(g, predictions[g][0], entity_ref)
-    print(b)
+# for g in predictions:
+#     b, entity_ref = step(g, predictions[g][0], entity_ref)
+#     print(b)
 
 
 # test = list(predictions.keys())[0]

@@ -108,7 +108,7 @@ venv.bak/
 
 # local toy testing
 toy/
-data/
+# data/
 
 # configuration files
 config/

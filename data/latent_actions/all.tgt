@@ -1,0 +1,7 @@
+equ_prin | ((((b+(-b))+0)*c)*a) in obj, (0+f) in obj, ((((0+((-b)+f))*c)*a)+b) in obj
+mul_assc | (((0+((-b)+f))*c)*a) in obj
+mul_assc | ((((b+(-b))+0)*c)*a) in obj
+equ_prin | 0 in obj 1, ((-b)+f) in obj, ((b+(-b))+0) in obj
+add_simp | (0+(-((((((b+(-b))+0)*c)*a)+(0+f))+(-((((0+((-b)+f))*c)*a)+b))))) in obj
+add_simp | ((((((b+(-b))+0)*c)*a)+(0+f))+(-((((0+((-b)+f))*c)*a)+b))) in obj
+add_simp | (b+(-b)) in obj

@@ -1,8 +1,8 @@
-from proof_system.prover import Prover
-from proof_system.all_axioms import all_axioms_to_prove
-from proof_system.utils import EmptyLogicStatement, get_entity_from_ls_and_coding, \
+from INT.proof_system.prover import Prover
+from INT.proof_system.all_axioms import all_axioms_to_prove
+from INT.proof_system.utils import EmptyLogicStatement, get_entity_from_ls_and_coding, \
     get_entity_coding_from_ls, is_entity, all_different_subtrees
-from data_generation.utils import find_entity_with_name
+from INT.data_generation.utils import find_entity_with_name
 
 import random
 

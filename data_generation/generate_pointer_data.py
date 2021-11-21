@@ -6,9 +6,9 @@ import os
 import random
 import pickle
 
-from data_generation.generate_problems import generate_multiple_problems
-from proof_system.graph_seq_conversion import Parser
-from representation.action_representation_pointer import ActionRepresentationPointer
+from INT.data_generation.generate_problems import generate_multiple_problems
+from INT.proof_system.graph_seq_conversion import Parser
+from INT.representation.action_representation_pointer import ActionRepresentationPointer
 
 import jsbeautifier
 
@@ -131,6 +131,9 @@ def generate_pointer_trajectories(multiple_problems, all_sources_to_targets=None
 
 
 def generate_pointer_trajectories_new(dataset, multiple_problems, all_sources_to_targets=None, max_len=120):
+    state_dup_c = 0
+    action_dup_c = 0
+    len_c = 0
 
     entity_ref = {}
     existing_states = {} # set()
@@ -161,12 +164,14 @@ def generate_pointer_trajectories_new(dataset, multiple_problems, all_sources_to
                 # dup_state.add(source)
                 dup_state.update({source:""})
             else:
+                state_dup_c += 1
                 flag = True
                 break
             if target not in dup_action:
                 # dup_action.add(target)
                 dup_action.update({target:""})
             else:
+                action_dup_c += 1
                 flag = True
                 break
 
@@ -176,6 +181,7 @@ def generate_pointer_trajectories_new(dataset, multiple_problems, all_sources_to
                 next_state = "QED"
 
             if len(source) > max_len or len(target) > max_len or len(next_state) > max_len:
+                len_c += 1
                 flag = True
                 break
 
@@ -191,6 +197,9 @@ def generate_pointer_trajectories_new(dataset, multiple_problems, all_sources_to
         if not flag:
             trajectories.append(trajectory)
     print(len(trajectories))
+    print("state dup:{}".format(state_dup_c))
+    print("action dup:{}".format(action_dup_c))
+    print("len c:{}".format(len_c))
     return trajectories, entity_ref
 
 
@@ -219,8 +228,8 @@ if __name__ == "__main__":
                                                     num_probs=args.num_probs, train_test="train",
                                                     orders=orders, degree=args.degree)
     # trajectories = generate_pointer_trajectories(multiple_problems=problems)
-    with open("latent_dataset_pointer_repr.json") as f:
-        dataset = json.load(f)
+    # with open("latent_dataset_pointer_repr.json") as f:
+    #     dataset = json.load(f)
     trajectories, entity_ref = generate_pointer_trajectories_new([], multiple_problems=problems)
 
     opts = jsbeautifier.default_options()

@@ -211,6 +211,10 @@ def generate_pointer_trajectories_new(dataset, multiple_problems, all_sources_to
 
 def generate_old_trajectories_new(dataset, multiple_problems, all_sources_to_targets=None, max_len=120):
 
+    state_dup_c = 0
+    action_dup_c = 0
+    len_c = 0
+
     entity_ref = {}
     existing_states = {} # set()
     print("start building")
@@ -240,14 +244,16 @@ def generate_old_trajectories_new(dataset, multiple_problems, all_sources_to_tar
                 # dup_state.add(source)
                 dup_state.update({source:""})
             else:
+                state_dup_c += 1
                 flag = True
                 break
-            if target not in dup_action:
-                # dup_action.add(target)
-                dup_action.update({target:""})
-            else:
-                flag = True
-                break
+            # if target not in dup_action:
+            #     # dup_action.add(target)
+            #     dup_action.update({target:""})
+            # else:
+            #     action_dup_c += 1
+            #     flag = True
+            #     break
 
             if i + 1 < len(zipped):
                 next_state, next_action = zipped[i+1]
@@ -255,6 +261,7 @@ def generate_old_trajectories_new(dataset, multiple_problems, all_sources_to_tar
                 next_state = "QED"
 
             if len(source) > max_len or len(target) > max_len or len(next_state) > max_len:
+                len_c += 1
                 flag = True
                 break
 
@@ -270,6 +277,9 @@ def generate_old_trajectories_new(dataset, multiple_problems, all_sources_to_tar
         if not flag:
             trajectories.append(trajectory)
     print(len(trajectories))
+    print("state dup:{}".format(state_dup_c))
+    print("action dup:{}".format(action_dup_c))
+    print("len c:{}".format(len_c))
     return trajectories, entity_ref
 
 

@@ -99,7 +99,8 @@ def step(objective, action, entity_ref):
         # print(convert_proof_to_pointer_repr(obs))
         entity_ref[source] = {"objective": obs["objectives"][0].name,
                               "ground_truth": [g.name for g in obs["ground_truth"]]}
-        
+        if source == "":
+            print("observation: {}".format(obs))
         return source, entity_ref
 
 

@@ -12,7 +12,7 @@ from INT.data_generation.combos_and_orders import get_combo_order_info, randomiz
 from INT.data_generation.forward2backward import forward_to_backward
 from INT.proof_system.all_axioms import all_axioms
 
-random.seed(0)
+random.seed(9999)
 
 
 def get_operands_when_making_up_conditions(how_to_extend, make_up_conclusions, prover, premise_names, no_atom_ents):

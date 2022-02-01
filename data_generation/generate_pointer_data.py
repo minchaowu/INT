@@ -228,9 +228,9 @@ if __name__ == "__main__":
                                                     num_probs=args.num_probs, train_test="train",
                                                     orders=orders, degree=args.degree)
     # trajectories = generate_pointer_trajectories(multiple_problems=problems)
-    # with open("latent_dataset_pointer_repr.json") as f:
-    #     dataset = json.load(f)
-    trajectories, entity_ref = generate_pointer_trajectories_new([], multiple_problems=problems)
+    with open("latent_dataset_pointer_repr.json") as f:
+        main_dataset = json.load(f)
+    trajectories, entity_ref = generate_pointer_trajectories_new(main_dataset, multiple_problems=problems)
 
     opts = jsbeautifier.default_options()
     opts.indent_size = 2

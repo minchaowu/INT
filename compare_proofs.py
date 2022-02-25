@@ -2,9 +2,14 @@ from INT.proof_system.prover import Prover
 from INT.proof_system.all_axioms import all_axioms
 from INT.visualization.seq_parse import name_to_ls
 from INT.representation.action_representation_pointer import ActionRepresentationPointer, thm2index
+from INT.proof_system.graph_seq_conversion import Parser
+
 import json
 import sys
+import jsbeautifier
+from INT.interface import step
 
+proof_parser = Parser()
 # with open("test_proof/entity_ref_2000.json") as f:
 #     entity_ref = json.load(f)
 
@@ -25,6 +30,53 @@ with open("latent_BFS_proofs.json") as f:
     predictions = json.load(f)
 
 
+with open("INT_proofs.json") as f:
+    predictions_INT = json.load(f)
+
+with open("test_proof/latent_dataset_pointer_repr_test.json") as f:
+    dataset = json.load(f)
+    
+with open("INT_proofs_new.json") as f:
+    predictions_INT_strange = json.load(f)
+
+with open("INT_proofs_baseline_original.json") as f:
+    predictions_INT_baseline = json.load(f)
+
+
+step_dict = {}
+
+for t in dataset:
+    for i, s in enumerate(t):
+        step_dict[s["state"]] = 7 - i
+
+
+    
+def list_diff_index(l1, l2):
+    length = min(len(l1), len(l2))
+    for i in range(length):
+        if l1[i] != l2[i]:
+            if i == length - 1 and len(l1) != len(l2):
+                return ["one longer"]
+            else:
+                return [i]
+    if i == length - 1 and len(l1) != len(l2):
+        return ["complete one longer"]
+    if i == length - 1:
+        return ["same"]
+            
+
+diffs = {}
+same_count = 0
+for g in predictions:
+    assert g in predictions_INT
+    if predictions[g][-1] == "QED":
+        predictions[g].pop()
+    diffs[g] = list_diff_index(predictions[g], predictions_INT[g])
+    if diffs[g] == ["same"]:
+        same_count += 1
+
+
+    
 # test_objectives = ["Equivalent ( mul ( add ( a , add ( c , f ) ) , add ( a , c ) ) , mul ( add ( a , add ( c , f ) ) , add ( a , add ( c , f ) ) ) )"]
 
 # test_objectives = ["Equivalent ( mul ( add ( a , add ( c , f ) ) , add ( a , c ) ) , sqr ( add ( a , add ( c , f ) ) ) )"]
@@ -112,11 +164,17 @@ def run_proof_with_steps(objective, actions, entity_ref):
     # print(ground_truth)
     prover = Prover(all_axioms, ground_truth, objectives, prove_direction="backward")
     for s,a in enumerate(actions):
-        objectives = prover.get_objectives()
+        # objectives = prover.get_objectives()
+        # objectives = entity_ref[]source
         try:
+            # print(a)
             decoded_action = ActionRepresentationPointer.pointer_str_to_action(objectives[0], a, mode="mc")
         except ValueError:
             print("Action decoding error")
+            # print(proof_parser.observation_to_source())
+            # print()
+            # print(a)
+            # sys.exit()
             return False,-1
         except AssertionError:
             print("Assertion error when decoding actions.")
@@ -128,7 +186,23 @@ def run_proof_with_steps(objective, actions, entity_ref):
         if prover.is_proved():
             print("Valid proof")
             return True,s
+        else:
+            obs = prover.get_observation()
+            source = proof_parser.observation_to_source(obs)
+            # print(source)
+            # assert source == objective
+            # print(source)
+            # print(convert_proof_to_pointer_repr(obs))
+            entity_ref[source] = {"objective": obs["objectives"][0].name,
+                                  "ground_truth": [g.name for g in obs["ground_truth"]]}
+            if source == "":
+                print("observation: {}".format(obs))
+            # return source, entity_ref
+        
         # objectives = prover.get_objectives()
+        
+        goal = entity_ref[source]["objective"]
+        objectives = [name_to_ls(goal)]
 
     print("Invalid proof")
     return False,-1
@@ -156,29 +230,97 @@ def run_proof_with_steps(objective, actions, entity_ref):
 
 c =0
 metrics = {}
+metrics_used_steps = {}
 
 lens_metrics = {}
 
 eq_count = 0
+latent_only_count = 0
+
 for i in range(7):
     metrics[i+1] = 0
-    lens_metrics[i+1] = 0
-    
-for t in predictions:
+    metrics_used_steps[i+1] = 0
+    # lens_metrics[i+1] = 0
+
+for t in predictions_INT:
     # objective = t s["state"]
-    actions = predictions[t]
-    lens_metrics[len(actions)] += 1
+    
+    # actions = predictions[t]
+    # # lens_metrics[len(actions)] += 1
+
+    # if len(actions) > 1:
+    #     if actions[0] == actions[1]:
+    #         eq_count += 1 
+        
+    # result,s = run_proof_with_steps(t, actions, entity_ref)
+    # if result:
+    #     print("Proved by latent")
+    #     diffs[t].append("latent")
+    #     metrics[step_dict[t]] += 1
+    #     metrics_used_steps[s+1] += 1
+    #     print("original steps: {}".format(metrics))
+    #     print("used steps: {}".format(metrics_used_steps))
+
+    actions = predictions_INT[t]
+    # lens_metrics[len(actions)] += 1
 
     if len(actions) > 1:
         if actions[0] == actions[1]:
             eq_count += 1 
-        
+
+    if actions[-1] == 1:
+        actions = actions[0]
+
+    # print(t)
+    # print(actions)
     result,s = run_proof_with_steps(t, actions, entity_ref)
     if result:
-        print("Proved")
-        
-        metrics[s+1] += 1
+        print("Proved by INT")
+        diffs[t].append("INT")
+        metrics[step_dict[t]] += 1
+        metrics_used_steps[s+1] += 1
+        print("original steps: {}".format(metrics))
+        print("used steps: {}".format(metrics_used_steps))
 
-print(metrics)
-print("lens stats: {}".format(lens_metrics))
+    if not result and predictions_INT_strange[t][-1] == 1:
+        print(t)
+        # print(len(predictions_INT_strange[t]))
+        # sys.exit()
+        
+    if "latent" in diffs[t] and "INT" not in diffs[t]:
+        latent_only_count += 1
+
+    # actions = predictions_INT_baseline[t]
+    # # lens_metrics[len(actions)] += 1
+
+    # if len(actions) > 1:
+    #     if actions[0] == actions[1]:
+    #         eq_count += 1 
+        
+    # result,s = run_proof_with_steps(t, actions, entity_ref)
+    # if result:
+    #     print("Proved by baseline")
+    #     diffs[t].append("baseline")
+    #     metrics[step_dict[t]] += 1
+    #     metrics_used_steps[s+1] += 1
+    #     print("original steps: {}".format(metrics))
+    #     print("used steps: {}".format(metrics_used_steps))
+    
+        
+# print(metrics)
+# print("lens stats: {}".format(lens_metrics))
+
+print("original steps: {}".format(metrics))
+print("used steps: {}".format(metrics_used_steps))
+
 print("eq:{}".format(eq_count))
+print("latent only: {}".format(latent_only_count))
+
+opts = jsbeautifier.default_options()
+opts.indent_size = 2
+diffs = jsbeautifier.beautify(json.dumps(diffs), opts)
+
+with open("diff_proofs.json", "w") as f:
+    f.write(diffs)
+
+print(same_count)
